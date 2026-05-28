@@ -113,8 +113,9 @@
   <!-- Short warning beat before a protocol check opens -->
   <div id="questionPrelude" class="question-prelude" aria-live="polite" aria-hidden="true">
     <div class="question-prelude-inner">
-      <p class="question-prelude-kicker">Protocol check incoming</p>
-      <p class="question-prelude-text">Nu kommer en fråga</p>
+      <p class="question-prelude-kicker">Möjlighet att uppgradera din hammare</p>
+      <p class="question-prelude-text">Nu kommer det en fråga</p>
+      <p class="question-prelude-sub">Svara rätt - hammaren kan bli mycket löjligare.</p>
     </div>
   </div>
 
@@ -136,7 +137,18 @@
   <div id="upgradeToast" class="toast" aria-live="polite">
     <div class="toast-inner">
       <div class="toast-spark" aria-hidden="true"></div>
-      <p class="toast-eyebrow">Hammer Upgraded</p>
+      <div class="toast-swap" aria-hidden="true">
+        <div class="toast-hammer-card toast-hammer-card--old">
+          <span id="toastOldHammerLabel">Hammare 1 ut</span>
+          <img id="toastOldHammerImg" alt="" draggable="false" />
+        </div>
+        <div class="toast-swap-arrow">→</div>
+        <div class="toast-hammer-card toast-hammer-card--new">
+          <span id="toastNewHammerLabel">Hammare 2 in</span>
+          <img id="toastNewHammerImg" alt="" draggable="false" />
+        </div>
+      </div>
+      <p class="toast-eyebrow">Hammare uppgraderad</p>
       <p class="toast-name" id="toastHammerName">Toy Hammer</p>
     </div>
   </div>

@@ -138,6 +138,8 @@ const el = {
   qOptions: $('qOptions'), qFeedback: $('qFeedback'), qSkip: $('qSkipBtn'),
   qPortrait: $('qPortrait'), qPortraitImg: $('qPortraitImg'),
   upgradeToast: $('upgradeToast'), toastName: $('toastHammerName'),
+  toastOldHammer: $('toastOldHammerImg'), toastNewHammer: $('toastNewHammerImg'),
+  toastOldLabel: $('toastOldHammerLabel'), toastNewLabel: $('toastNewHammerLabel'),
   finalPrompt: $('finalPrompt'), finalCrackBtn: $('finalCrackBtn'),
   revealMouse: $('revealMouse'),
   tripBtn: $('tripDetailsBtn'), tripDetails: $('tripDetails'),
@@ -535,8 +537,13 @@ function rotateSystemMessages() {
 }
 
 /* ------------------------------ UPGRADE --------------------------------- */
-function showUpgrade(level) {
+function showUpgrade(oldLevel, level) {
   el.toastName.textContent = HAMMERS[level - 1].name;
+  if (el.toastOldLabel) el.toastOldLabel.textContent = 'Hammare ' + oldLevel + ' ut';
+  if (el.toastNewLabel) el.toastNewLabel.textContent = 'Hammare ' + level + ' in';
+  if (el.toastOldHammer) setKeyed(el.toastOldHammer, hammerImageForLevel(oldLevel), ASSETS.hammerBg);
+  if (el.toastNewHammer) setKeyed(el.toastNewHammer, hammerImageForLevel(level), ASSETS.hammerBg);
+  el.upgradeToast.classList.remove('is-open'); void el.upgradeToast.offsetWidth;
   el.hammerMedallion.classList.remove('upgrade'); void el.hammerMedallion.offsetWidth;
   el.hammerMedallion.classList.add('upgrade');
   el.upgradeToast.classList.add('is-open');
@@ -648,7 +655,11 @@ function applyReward(reward) {
   if (!reward) return;
   if (reward.type === 'hammer') {
     const lvl = clamp(reward.value || (state.hammerLevel + 1), 1, HAMMERS.length);
-    if (lvl > state.hammerLevel) { state.hammerLevel = lvl; showUpgrade(lvl); }
+    if (lvl > state.hammerLevel) {
+      const oldLevel = state.hammerLevel;
+      state.hammerLevel = lvl;
+      showUpgrade(oldLevel, lvl);
+    }
     render(); save();
     // a single answer may unlock the next check immediately if its threshold is already met
     setTimeout(() => { if (state.currentCracks < TARGET && !state.isComplete) maybeQuestion(); }, UPGRADE_TOAST_MS + 450);
