@@ -246,19 +246,6 @@
       "invented": false
     },
     {
-      "id": 16,
-      "category": "moa",
-      "threshold": 16600,
-      "question": "Vad har Moa Rihnes kvalitetsstämpel precis godkänt?",
-      "options": ["Osäkra nivåer av födelsedagsdrama", "En helt vanlig tisdag", "Ingenting, hon har rast", "Äggets deklaration"],
-      "correctIndex": 0,
-      "successText": "Rätt. Stämpel verifierad. Dramanivå nominell (mycket hög).",
-      "wrongText": "Fel, men Moa Rihne uppskattar kreativiteten.",
-      "rewardText": "Hammare uppgraderad: Soft Gel Storsläggan.",
-      "reward": { "type": "hammer", "value": 17 },
-      "invented": false
-    },
-    {
       "id": 18,
       "category": "family",
       "threshold": 19000,
