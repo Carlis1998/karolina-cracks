@@ -271,20 +271,6 @@
       "rewardText": "Hammare uppgraderad: Organisationsnummer-Certifierade Kolossen.",
       "reward": { "type": "hammer", "value": 22 },
       "invented": false
-    },
-    {
-      "id": 24,
-      "category": "absurd",
-      "threshold": 25500,
-      "question": "Sista protokollkollen. Är du redo?",
-      "options": ["Nej", "Absolut inte", "Kanske", "Ja — leverera den sista cracken"],
-      "correctIndex": 3,
-      "successText": "Rätt. Moas slutinspektion godkänd. Gör dig redo att cracka.",
-      "wrongText": "Förståeligt. Men ägget insisterar. Försök igen.",
-      "rewardText": "Maxhammare aktiv. Den sista väggen är tunn.",
-      "reward": { "type": "hammer", "value": 24 },
-      "personalNote": "Allt det här byggdes för dig. Nu — krossa den. — Carl-Åke & Moa",
-      "invented": false
     }
   ]
 }
