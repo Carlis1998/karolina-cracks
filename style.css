@@ -550,6 +550,7 @@ body.is-loading .screen { display: none; }
 
 /* ===================== SCREEN 5 — REVEAL ===================== */
 .screen--reveal { text-align: center; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+  padding: max(env(safe-area-inset-top), 10px) 16px max(env(safe-area-inset-bottom), 16px);
   background: #050504 url("assets/images/ui/v2_bg_reveal.png") center top / cover no-repeat; }
 /* vignette over the moonlit backdrop — keeps the moon glow up top, sinks the edges so the headline reads */
 .screen--reveal::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -573,17 +574,21 @@ body.is-loading .screen { display: none; }
 }
 
 /* castle stays in colour — the single chromatic payoff bursting from the engraving */
-.reveal-castle { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) translateY(40%); width: min(120%, 760px); aspect-ratio: 1/1; z-index: 1; opacity: 0;
+.reveal-castle { position: absolute; bottom: -4%; left: 50%; transform: translateX(-50%) translateY(48%); width: min(108%, 660px); aspect-ratio: 1/1; z-index: 1; opacity: 0;
   background: url("assets/images/reveal/castle.png") bottom center/contain no-repeat; filter: drop-shadow(0 0 40px rgba(236,214,160,0.45)); transition: opacity 1.4s ease 0.4s, transform 1.4s ease 0.4s; }
-.screen--reveal.go .reveal-castle { opacity: 0.92; transform: translateX(-50%) translateY(18%); }
+.screen--reveal.go .reveal-castle { opacity: 0.78; transform: translateX(-50%) translateY(38%); }
 
-.reveal-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 22px; margin: auto 0; }
+.reveal-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1.15vh, 8px); width: 100%; padding: 8px 0 18px; margin: 0; }
 
 /* EGG CRACKED banner crowning the reveal */
-.reveal-cracked { width: min(82vw, 380px); aspect-ratio: 3 / 1; display: grid; place-items: center; margin-bottom: 4px;
-  background: url("assets/images/ui/v2_banner_b.png") center/contain no-repeat; opacity: 0;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.6)); }
-.reveal-cracked span { font-family: var(--font-decor); font-weight: 400; font-size: clamp(1rem, 5.4vw, 1.7rem); letter-spacing: 0.04em; color: var(--ink); padding-bottom: 4%; text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
+.reveal-cracked { width: min(74vw, 340px); min-height: 68px; display: grid; place-items: center; margin-bottom: 2px; padding: 10px 18px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.62), transparent 38%),
+    radial-gradient(120% 120% at 50% 0%, #f8f5eb 0%, var(--cream) 58%, var(--cream-2) 100%);
+  border: 2px solid rgba(23,21,14,0.78); border-radius: 24px;
+  box-shadow: inset 0 0 0 4px rgba(196,185,159,0.5), inset 0 0 0 5px rgba(23,21,14,0.28), 0 10px 22px rgba(0,0,0,0.6);
+  opacity: 0; overflow: visible; }
+.reveal-cracked span { font-family: var(--font-decor); font-weight: 400; font-size: clamp(1.15rem, 5.6vw, 1.7rem); line-height: 1; letter-spacing: 0.04em; color: var(--ink); text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
 .screen--reveal.go .reveal-cracked { animation: popIn 0.7s cubic-bezier(.2,1.4,.3,1) 0.5s both; }
 
 .reveal-mouse { width: clamp(110px, 36vw, 180px); aspect-ratio: 1; background: center/contain no-repeat; margin-bottom: 4px; opacity: 0; transform: translateY(20px) scale(0.8); }
@@ -633,6 +638,17 @@ body.is-loading .screen { display: none; }
 .screen--reveal.go .btn--ghost { animation: popIn 0.5s ease 4.1s both; }
 .trip-details { margin-top: 16px; font-family: var(--font-type); font-size: 0.82rem; line-height: 1.7; color: var(--cream-2); background: rgba(0,0,0,0.4); border: 1px solid rgba(167,162,148,0.3); border-radius: 8px; padding: 16px 20px; }
 .trip-personalise { color: var(--brass); font-size: 0.66rem; margin-top: 8px; }
+
+@media (max-width: 430px) {
+  .reveal-cracked { width: min(70vw, 310px); min-height: 58px; padding: 8px 16px 10px; }
+  .reveal-mouse { width: clamp(96px, 32vw, 136px); margin-bottom: 0; }
+  .reveal-headline em { font-size: clamp(1.35rem, 7.2vw, 2.1rem); }
+  .reveal-headline span { font-size: clamp(2rem, 10.2vw, 3.4rem); }
+  .reveal-line--funder { font-size: 1.08rem; max-width: 28ch; }
+  .reveal-line--pack { margin-top: 2px; }
+  .keepsake { margin-top: 12px; width: min(86vw, 340px); }
+  .keepsake-body { padding: 16px 20px 18px; }
+}
 
 /* ===================== DEBUG + MUTE ===================== */
 .debug { position: fixed; bottom: 8px; left: 8px; z-index: 80; flex-wrap: wrap; gap: 4px; background: rgba(0,0,0,0.85); border: 1px solid var(--gold-deep); border-radius: 6px; padding: 6px; font-family: var(--font-type); }
