@@ -260,19 +260,6 @@
       "invented": false
     },
     {
-      "id": 20,
-      "category": "birthday",
-      "threshold": 21400,
-      "question": "Att räkna om 26 år till crack points ger ett tal som känns?",
-      "options": ["Rimligt", "Lite väl mycket", "Enormt och teatraliskt", "Som ett stavfel"],
-      "correctIndex": 2,
-      "successText": "Rätt. Enormt och teatraliskt är hela poängen.",
-      "wrongText": "Det är inte ett stavfel. Moa kollade. Två gånger.",
-      "rewardText": "Hammare uppgraderad: Den Stadigt Eskalerande Stridshammaren.",
-      "reward": { "type": "hammer", "value": 21 },
-      "invented": false
-    },
-    {
       "id": 21,
       "category": "nailed_it",
       "threshold": 22600,
