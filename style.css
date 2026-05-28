@@ -638,6 +638,18 @@ body.is-loading .screen { display: none; }
 .screen--reveal.go .btn--ghost { animation: popIn 0.5s ease 4.1s both; }
 .trip-details { margin-top: 16px; font-family: var(--font-type); font-size: 0.82rem; line-height: 1.7; color: var(--cream-2); background: rgba(0,0,0,0.4); border: 1px solid rgba(167,162,148,0.3); border-radius: 8px; padding: 16px 20px; }
 .trip-personalise { color: var(--brass); font-size: 0.66rem; margin-top: 8px; }
+.trip-video { margin-top: 14px; width: min(100%, 430px); }
+.trip-video-frame {
+  position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
+  border: 1px solid rgba(216,183,106,0.48); border-radius: 8px;
+  background: radial-gradient(100% 100% at 50% 0%, rgba(236,214,160,0.12), rgba(0,0,0,0.72));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 10px 24px rgba(0,0,0,0.42);
+}
+.trip-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.trip-video-link {
+  display: inline-block; margin-top: 10px; color: var(--gold-1);
+  font-family: var(--font-type); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
 
 @media (max-width: 430px) {
   .reveal-cracked { width: min(70vw, 310px); min-height: 58px; padding: 8px 16px 10px; }

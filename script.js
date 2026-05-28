@@ -141,6 +141,7 @@ const el = {
   finalPrompt: $('finalPrompt'), finalCrackBtn: $('finalCrackBtn'),
   revealMouse: $('revealMouse'),
   tripBtn: $('tripDetailsBtn'), tripDetails: $('tripDetails'),
+  tripVideo: $('tripVideo'), tripVideoFrame: $('tripVideoFrame'),
   debug: $('debugPanel'), mute: $('muteBtn')
 };
 
@@ -693,6 +694,21 @@ function showReveal() {
   setTimeout(() => Sound.fx.fanfare(), 700);
 }
 
+function loadTripVideo() {
+  if (!el.tripVideo || !el.tripVideoFrame || el.tripVideoFrame.dataset.loaded === 'true') return;
+  const videoId = el.tripVideo.dataset.youtubeId;
+  if (!videoId) return;
+  const iframe = document.createElement('iframe');
+  iframe.title = 'Disneyland preparation video';
+  iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(videoId)
+    + '?autoplay=1&playsinline=1&rel=0&modestbranding=1';
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  iframe.allowFullscreen = true;
+  iframe.loading = 'lazy';
+  el.tripVideoFrame.appendChild(iframe);
+  el.tripVideoFrame.dataset.loaded = 'true';
+}
+
 /* ------------------------------ SCREENS --------------------------------- */
 function switchScreen(target) {
   [el.intro, el.game, el.reveal].forEach(s => { s.classList.remove('is-active'); });
@@ -853,6 +869,7 @@ function wire() {
   el.tripBtn.addEventListener('click', () => {
     el.tripDetails.hidden = !el.tripDetails.hidden;
     el.tripBtn.textContent = el.tripDetails.hidden ? 'Show trip details' : 'Hide trip details';
+    if (!el.tripDetails.hidden) loadTripVideo();
   });
   el.mute.addEventListener('click', () => {
     state.soundEnabled = !state.soundEnabled; save();
