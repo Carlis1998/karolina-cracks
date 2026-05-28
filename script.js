@@ -107,7 +107,7 @@ let sysMsgTimer = null;
 const keyedCache = {};
 
 function loadState() {
-  if (params.get('reset') === 'true') { localStorage.removeItem(STORAGE_KEY); }
+  if (params.get('resume') !== 'true') { localStorage.removeItem(STORAGE_KEY); }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return Object.assign(defaultState(), JSON.parse(raw));
