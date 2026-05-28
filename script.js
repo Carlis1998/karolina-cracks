@@ -39,6 +39,13 @@ const ASSETS = {
 
 /* ------------------------------- TUNING --------------------------------- */
 const TARGET = 26000;
+const QUESTION_PRELUDE_MS = 1650;
+const ANSWER_READ_MS = 3600;
+const ANSWER_READ_WITH_NOTE_MS = 5200;
+const SKIP_READ_MS = 3000;
+const SKIP_READ_WITH_NOTE_MS = 4600;
+const WRONG_READ_MS = 1500;
+const UPGRADE_TOAST_MS = 2800;
 // Per-tap crack points for hammer levels 1..24. Progression is now driven ONLY by
 // answering protocol checks correctly (each correct answer = +1 hammer level). The
 // ramp is gentle early and escalates: ~90 efficient taps reach 26,000 if every check
@@ -126,6 +133,7 @@ const el = {
   hammerImg: $('hammerImg'), hammerMedallion: $('hammerMedallion'),
   hammerName: $('hammerName'), multiplierLabel: $('multiplierLabel'),
   protocolHint: $('protocolHint'), strikeInfo: $('strikeInfo'),
+  questionPrelude: $('questionPrelude'),
   qModal: $('questionModal'), qProgress: $('qProgress'), qText: $('qText'),
   qOptions: $('qOptions'), qFeedback: $('qFeedback'), qSkip: $('qSkipBtn'),
   qPortrait: $('qPortrait'), qPortraitImg: $('qPortraitImg'),
@@ -532,13 +540,30 @@ function showUpgrade(level) {
   el.hammerMedallion.classList.add('upgrade');
   el.upgradeToast.classList.add('is-open');
   Sound.fx.upgrade();
-  setTimeout(() => el.upgradeToast.classList.remove('is-open'), 1400);
+  setTimeout(() => el.upgradeToast.classList.remove('is-open'), UPGRADE_TOAST_MS);
 }
 
 /* ------------------------------ QUESTIONS ------------------------------- */
 function maybeQuestion() {
   const q = nextQuestion();
-  if (q && !questionOpen) openQuestion(q);
+  if (q && !questionOpen) cueQuestion(q);
+}
+function cueQuestion(q) {
+  questionOpen = true;
+  currentQuestion = q;
+  clearTimeout(idleTimer); el.eggImg.classList.remove('breathing');
+  if (el.questionPrelude) {
+    el.questionPrelude.classList.add('is-open');
+    el.questionPrelude.setAttribute('aria-hidden', 'false');
+  }
+  systemMessage('Protocol check incoming.');
+  setTimeout(() => {
+    if (el.questionPrelude) {
+      el.questionPrelude.classList.remove('is-open');
+      el.questionPrelude.setAttribute('aria-hidden', 'true');
+    }
+    openQuestion(q);
+  }, QUESTION_PRELUDE_MS);
 }
 function openQuestion(q) {
   questionOpen = true;
@@ -576,17 +601,25 @@ function answer(q, idx, btn) {
     Sound.fx.correct();
     state.answeredQuestions.push(q.id);
     save();
-    setTimeout(() => { closeQuestion(); applyReward(q.reward); maybeEnterFinale(); }, q.personalNote ? 2300 : 1300);
+    setTimeout(() => { closeQuestion(); applyReward(q.reward); maybeEnterFinale(); }, q.personalNote ? ANSWER_READ_WITH_NOTE_MS : ANSWER_READ_MS);
   } else {
     btn.classList.add('wrong');
+    buttons.forEach(b => b.disabled = true);
     el.qFeedback.hidden = false;
     el.qFeedback.textContent = q.wrongText;
     Sound.fx.wrong();
-    setTimeout(() => { btn.classList.remove('wrong'); btn.disabled = false; }, 600);
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      buttons.forEach(b => b.disabled = false);
+    }, WRONG_READ_MS);
   }
 }
 function closeQuestion() {
   el.qModal.classList.remove('is-open');
+  if (el.questionPrelude) {
+    el.questionPrelude.classList.remove('is-open');
+    el.questionPrelude.setAttribute('aria-hidden', 'true');
+  }
   questionOpen = false;
   currentQuestion = null;
   if (!state.isComplete && !state.finalX26) scheduleIdle();
@@ -608,7 +641,7 @@ function skipQuestion() {
     + (q.personalNote ? '<span class="note">' + q.personalNote + '</span>' : '');
   Sound.fx.drop();
   if (!state.answeredQuestions.includes(q.id)) { state.answeredQuestions.push(q.id); save(); }
-  setTimeout(() => { closeQuestion(); applyReward(q.reward); maybeEnterFinale(); }, q.personalNote ? 1900 : 900);
+  setTimeout(() => { closeQuestion(); applyReward(q.reward); maybeEnterFinale(); }, q.personalNote ? SKIP_READ_WITH_NOTE_MS : SKIP_READ_MS);
 }
 function applyReward(reward) {
   if (!reward) return;
@@ -617,7 +650,7 @@ function applyReward(reward) {
     if (lvl > state.hammerLevel) { state.hammerLevel = lvl; showUpgrade(lvl); }
     render(); save();
     // a single answer may unlock the next check immediately if its threshold is already met
-    setTimeout(() => { if (state.currentCracks < TARGET && !state.isComplete) maybeQuestion(); }, 300);
+    setTimeout(() => { if (state.currentCracks < TARGET && !state.isComplete) maybeQuestion(); }, UPGRADE_TOAST_MS + 450);
   } else if (reward.type === 'points') {
     addCracks(reward.value);
   } else if (reward.type === 'steam') {
@@ -794,7 +827,7 @@ function setupDebug() {
       const q = QUESTIONS.find(q => !state.answeredQuestions.includes(q.id));
       if (q) {
         if (state.currentCracks < q.threshold) { state.currentCracks = q.threshold; render(); save(); }
-        openQuestion(q);
+        cueQuestion(q);
       } else systemMessage('Debug: alla protokoll besvarade. Använd "Clear storage".');
     } else if (a === 'reveal') { state.isComplete = false; state.currentCracks = TARGET; render(); triggerFinalPrompt(); }
     else if (a === 'clear') { localStorage.removeItem(STORAGE_KEY); location.reload(); }

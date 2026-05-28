@@ -368,6 +368,42 @@ body.is-loading .screen { display: none; }
 .strike-info { font-family: var(--font-type); font-size: 0.64rem; letter-spacing: 0.1em; color: var(--cream-2); opacity: 0.78; }
 
 /* ===================== SCREEN 3 — QUESTION MODAL ===================== */
+.question-prelude {
+  position: fixed; inset: 0; z-index: 39; display: none; place-items: center;
+  padding: 24px; pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, rgba(216,183,106,0.18), rgba(4,3,1,0.82) 58%, rgba(4,3,1,0.9));
+  backdrop-filter: blur(2px);
+}
+.question-prelude.is-open { display: grid; }
+.question-prelude-inner {
+  position: relative; width: min(86vw, 420px); min-height: 154px;
+  display: grid; place-items: center; text-align: center; padding: 24px 22px 28px;
+  background: url("assets/images/ui/v2_banner_b.png") center/contain no-repeat;
+  filter: drop-shadow(0 16px 32px rgba(0,0,0,0.64));
+  animation: preludeIn 0.42s cubic-bezier(.2,1.25,.3,1) both;
+}
+.question-prelude-inner::before {
+  content: ""; position: absolute; inset: -54%; z-index: -1;
+  background: url("assets/images/ui/v2_starburst_glow.png") center/contain no-repeat;
+  opacity: 0.58; mix-blend-mode: screen; animation: rayPulse 1.4s ease-out both;
+}
+.question-prelude-kicker {
+  font-family: var(--font-type); font-size: 0.62rem; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--gold-1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.86);
+}
+.question-prelude-text {
+  font-family: var(--font-decor); font-weight: 400;
+  font-size: clamp(1.85rem, 9vw, 3rem); line-height: 0.98;
+  color: var(--cream); margin-top: 2px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 14px rgba(236,214,160,0.34);
+}
+@keyframes preludeIn {
+  0% { opacity: 0; transform: scale(0.82) rotate(-2deg); }
+  70% { opacity: 1; transform: scale(1.03) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
 .modal { position: fixed; inset: 0; z-index: 40; display: none; align-items: flex-end; justify-content: center; }
 .modal.is-open { display: flex; }
 .modal-scrim { position: absolute; inset: 0; background: rgba(4,3,1,0.78); backdrop-filter: blur(3px); }
