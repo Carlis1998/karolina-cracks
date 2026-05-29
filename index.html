@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0d0a06" />
-  <title>26,000 Cracks — A Birthday Protocol</title>
+  <title>26 000 Cracks — Ett födelsedagsprotokoll</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111110'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='15' font-weight='700' text-anchor='middle' fill='%23d8b76a'%3E26%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,7 +27,7 @@
 
     <div class="intro-stage">
       <div class="intro-beat" data-beat="name">
-        <p class="intro-kicker">Birthday Systems Co. presents</p>
+        <p class="intro-kicker">Födelsedagsbyrån AB presenterar</p>
         <h1 class="intro-name">Karolina Willberg</h1>
         <p class="intro-greeting" id="introGreeting" aria-live="polite"></p>
       </div>
@@ -36,19 +36,19 @@
         <div class="intro-years">
           <span class="intro-26" id="intro26">26</span>
           <span class="intro-zeros" id="introZeros"></span>
-          <span class="intro-yearsword" id="introYearsWord">Years</span>
+          <span class="intro-yearsword" id="introYearsWord">År</span>
         </div>
-        <p class="intro-subreq" id="introSubReq">Cracks required</p>
+        <p class="intro-subreq" id="introSubReq">Sprickor som krävs</p>
       </div>
 
       <div class="intro-beat" data-beat="stamp">
         <div class="stamp stamp--manufacturer" id="introStamp">
           <span class="stamp-caption">
-            <small>Inspected &amp;</small>
-            <strong>Approved</strong>
+            <small>Granskad &amp;</small>
+            <strong>Godkänd</strong>
           </span>
         </div>
-        <p class="intro-authorized">Birthday Protocol Authorized</p>
+        <p class="intro-authorized">Födelsedagsprotokoll godkänt</p>
       </div>
 
       <div class="intro-beat" data-beat="egg">
@@ -57,30 +57,30 @@
     </div>
 
     <button id="beginBtn" class="btn btn--begin" type="button">
-      <span>Begin cracking</span>
-      <small>tap to start · unlocks sound</small>
+      <span>Börja krossa</span>
+      <small>tryck för att börja · låser upp ljud</small>
     </button>
-    <button id="skipIntroBtn" class="skip-intro" type="button">Skip ›</button>
+    <button id="skipIntroBtn" class="skip-intro" type="button">Hoppa över ›</button>
   </section>
 
   <!-- ============================ SCREEN 2: MAIN EGG CLICKER ============================ -->
   <main id="screen-game" class="screen screen--game" aria-label="Egg cracking">
     <header class="game-head">
-      <p class="brand" id="brandLabel">Birthday Systems Co.</p>
+      <p class="brand" id="brandLabel">Födelsedagsbyrån AB</p>
 
       <div class="counter">
         <div class="counter-num">
           <span id="crackCount" class="counter-current">0</span>
           <span class="counter-sep">/</span>
-          <span class="counter-target">26,000</span>
+          <span class="counter-target">26 000</span>
         </div>
-        <p class="counter-label">Crack points</p>
+        <p class="counter-label">Sprickpoäng</p>
         <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="26000" aria-valuenow="0">
           <div class="progress-fill" id="progressFill"></div>
         </div>
       </div>
 
-      <p class="system-msg" id="systemMsg">Karolina Willberg detected.</p>
+      <p class="system-msg" id="systemMsg">Karolina Willberg upptäckt.</p>
     </header>
 
     <button class="egg-stage" id="eggStage" type="button" aria-label="Strike the egg">
@@ -88,11 +88,11 @@
       <div class="egg-shrine" aria-hidden="true"></div>
       <div class="egg-glow" id="eggGlow" aria-hidden="true"></div>
       <div class="egg-shadow" aria-hidden="true"></div>
-      <img id="eggImg" class="egg-img" alt="A mysterious ornate egg" draggable="false" />
+      <img id="eggImg" class="egg-img" alt="Ett mystiskt utsmyckat ägg" draggable="false" />
       <img id="swingHammer" class="swing-hammer" alt="" draggable="false" />
       <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
       <div class="hit-burst" id="hitBurst" aria-hidden="true"></div>
-      <div class="tap-hint" id="tapHint">Tap the egg to crack it</div>
+      <div class="tap-hint" id="tapHint">Tryck på ägget för att krossa det</div>
     </button>
 
     <div class="hammer-info">
@@ -100,14 +100,14 @@
         <img id="hammerImg" class="hammer-img" alt="" draggable="false" />
       </div>
       <div class="hammer-text">
-        <p class="hammer-name" id="hammerName">Wooden Spoon</p>
+        <p class="hammer-name" id="hammerName">Träslev</p>
         <p class="multiplier" id="multiplierLabel" data-active="false">Hammare 1 / 24</p>
       </div>
     </div>
 
     <footer class="game-foot">
-      <p class="protocol-hint" id="protocolHint">Next protocol check at 350</p>
-      <p class="strike-info" id="strikeInfo">+45 per strike</p>
+      <p class="protocol-hint" id="protocolHint">Nästa popquiz snart</p>
+      <p class="strike-info" id="strikeInfo">+45 per slag</p>
     </footer>
   </main>
 
@@ -125,9 +125,9 @@
     <div class="modal-scrim"></div>
     <div class="modal-card q-card">
       <div class="q-crest" aria-hidden="true"></div>
-      <p class="q-eyebrow"><span>Protocol Check</span> · <span id="qProgress">Question 1 of 21</span></p>
+      <p class="q-eyebrow"><span>Protokollkontroll</span> · <span id="qProgress">Fråga 1 av 21</span></p>
       <div class="q-portrait" id="qPortrait" aria-hidden="true" hidden><img id="qPortraitImg" alt="" draggable="false" /></div>
-      <p class="q-text" id="qText">Question goes here</p>
+      <p class="q-text" id="qText">Frågan visas här</p>
       <div class="q-options" id="qOptions"><!-- buttons injected --></div>
       <p class="q-feedback" id="qFeedback" hidden></p>
       <button id="qSkipBtn" class="q-skip" type="button">Hoppa över ›</button>
@@ -150,7 +150,7 @@
         </div>
       </div>
       <p class="toast-eyebrow">Hammare uppgraderad</p>
-      <p class="toast-name" id="toastHammerName">Toy Hammer</p>
+      <p class="toast-name" id="toastHammerName">Leksakshammare</p>
     </div>
   </div>
 
@@ -160,11 +160,11 @@
     <div class="reveal-castle" aria-hidden="true"></div>
     <div class="reveal-confetti" id="confettiLayer" aria-hidden="true"></div>
     <div class="reveal-content">
-      <div class="reveal-cracked" aria-hidden="true"><span>Egg Cracked</span></div>
+      <div class="reveal-cracked" aria-hidden="true"><span>Ägget krossat</span></div>
       <div class="reveal-mouse" id="revealMouse" aria-hidden="true"></div>
-      <h2 class="reveal-headline"><em>You're going to</em><br /><span>Disneyland</span></h2>
-      <p class="reveal-line reveal-line--funder"><strong>Moa</strong> and <strong>Carl-Åke</strong> have paid for your trip.</p>
-      <p class="reveal-line reveal-line--pack">Pack your bags.</p>
+      <h2 class="reveal-headline"><em>Du ska åka till</em><br /><span>Disneyland</span></h2>
+      <p class="reveal-line reveal-line--funder"><strong>Moa</strong> och <strong>Carl-Åke</strong> har betalat din resa.</p>
+      <p class="reveal-line reveal-line--pack">Packa väskorna.</p>
 
       <div class="keepsake" id="keepsake">
         <div class="keepsake-perf" aria-hidden="true"></div>
@@ -177,13 +177,13 @@
         </div>
       </div>
 
-      <button id="tripDetailsBtn" class="btn btn--ghost" type="button">Show trip details</button>
+      <button id="tripDetailsBtn" class="btn btn--ghost" type="button">Visa resedetaljer</button>
       <div class="trip-details" id="tripDetails" hidden>
         <p>Destination: Disneyland.</p>
-        <p>Paid for by Moa Rihne &amp; Carl-Åke Willberg.</p>
+        <p>Betald av Moa Rihne &amp; Carl-Åke Willberg.</p>
         <div class="trip-video" id="tripVideo" data-youtube-id="NGhuLkjl4iI">
           <div class="trip-video-frame" id="tripVideoFrame"></div>
-          <a class="trip-video-link" href="https://www.youtube.com/watch?v=NGhuLkjl4iI" target="_blank" rel="noopener">Open preparation video</a>
+          <a class="trip-video-link" href="https://www.youtube.com/watch?v=NGhuLkjl4iI" target="_blank" rel="noopener">Öppna förberedelsevideon</a>
         </div>
       </div>
     </div>
@@ -193,9 +193,9 @@
   <div id="finalPrompt" class="modal final-prompt" role="dialog" aria-modal="true">
     <div class="modal-scrim"></div>
     <div class="modal-card final-card">
-      <p class="final-eyebrow">Crack requirement complete</p>
-      <p class="final-sub">Moa final inspection approved.</p>
-      <button id="finalCrackBtn" class="btn btn--final" type="button">Deliver final crack</button>
+      <p class="final-eyebrow">Sprickkravet uppfyllt</p>
+      <p class="final-sub">Moa har godkänt slutbesiktningen.</p>
+      <button id="finalCrackBtn" class="btn btn--final" type="button">Leverera sista slaget</button>
     </div>
   </div>
 

@@ -73,13 +73,13 @@ function hammerImageForLevel(lvl) {
 // Egg visual-state lower bounds (state 1..9); state 10 = final break.
 const EGG_BANDS = [0, 2600, 5200, 7800, 10400, 13000, 15600, 18200, 20800];
 const SYSTEM_MESSAGES = [
-  'Karolina Willberg detected.',
-  'Age confirmed: 26. Converting 26 years into 26,000 cracks.',
-  'Quality control online. Birthday drama within unsafe limits.',
-  'Egg integrity dropping. Keep striking.',
-  'Steam pressure rising. The shell is listening.',
-  'Protocol nominal. Continue cracking.',
-  'Payload sealed inside. Contents classified.'
+  'Karolina Willberg upptäckt.',
+  'Ålder bekräftad: 26. Omvandlar 26 år till 26 000 sprickor.',
+  'Kvalitetskontroll online. Födelsedagsdramat inom osäkra gränser.',
+  'Äggets integritet sjunker. Fortsätt slå.',
+  'Ångtrycket stiger. Skalet lyssnar.',
+  'Protokoll nominellt. Fortsätt krossa.',
+  'Lasten förseglad inuti. Innehåll hemligstämplat.'
 ];
 
 /* ------------------------------- STATE ---------------------------------- */
@@ -249,7 +249,7 @@ const Sound = (() => {
 })();
 
 /* ------------------------------ HELPERS --------------------------------- */
-const fmt = (n) => n.toLocaleString('en-US');
+const fmt = (n) => n.toLocaleString('sv-SE');
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
 function eggStateForCracks(c) {
@@ -487,7 +487,7 @@ function enterFinalMode() {
   el.eggStage.classList.add('final-mode');
   Sound.fx.steam();
   buzz([20, 50, 20, 50, 30]);
-  systemMessage('×26 ÖVERLADDNING! Skalet är som tunnast. En sista crack återstår.');
+  systemMessage('×26 ÖVERLADDNING! Skalet är som tunnast. Ett sista slag återstår.');
   render(); save();
 }
 
@@ -600,7 +600,7 @@ function cueQuestion(q) {
     el.questionPrelude.classList.add('is-open');
     el.questionPrelude.setAttribute('aria-hidden', 'false');
   }
-  systemMessage('Protocol check incoming.');
+  systemMessage('Protokollkontroll på ingång.');
   setTimeout(() => {
     if (el.questionPrelude) {
       el.questionPrelude.classList.remove('is-open');
@@ -615,7 +615,7 @@ function openQuestion(q) {
   clearTimeout(idleTimer); el.eggImg.classList.remove('breathing');
   if (el.qSkip) el.qSkip.disabled = false;
   const answeredCount = state.answeredQuestions.length;
-  el.qProgress.textContent = 'Question ' + (answeredCount + 1) + ' of ' + QUESTIONS.length;
+  el.qProgress.textContent = 'Fråga ' + (answeredCount + 1) + ' av ' + QUESTIONS.length;
   el.qText.textContent = q.question;
   if (q.portrait) { el.qPortraitImg.src = 'assets/images/faces/' + q.portrait; el.qPortrait.hidden = false; }
   else { el.qPortrait.hidden = true; el.qPortraitImg.removeAttribute('src'); }
@@ -707,7 +707,7 @@ function applyReward(reward) {
   } else if (reward.type === 'multiplier') {
     if (reward.value >= 10) ticketStorm();
     setMultiplier(reward.value, reward.duration || 12);
-    systemMessage('Hammer recalibrated: ×' + reward.value + ' for ' + (reward.duration || 12) + 's.');
+    systemMessage('Hammaren omkalibrerad: ×' + reward.value + ' i ' + (reward.duration || 12) + ' s.');
   }
 }
 
@@ -746,7 +746,7 @@ function loadTripVideo() {
   const videoId = el.tripVideo.dataset.youtubeId;
   if (!videoId) return;
   const iframe = document.createElement('iframe');
-  iframe.title = 'Disneyland preparation video';
+  iframe.title = 'Disneyland-förberedelsevideo';
   iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(videoId)
     + '?autoplay=1&playsinline=1&rel=0&modestbranding=1';
   iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -806,7 +806,7 @@ async function runIntro() {
   el.introYearsWord.classList.add('gone');
   await wait(420);
   el.introYearsWord.style.display = 'none';
-  ',000'.split('').forEach((ch, i) => {
+  ' 000'.split('').forEach((ch, i) => {
     const span = document.createElement('span');
     span.className = 'z'; span.textContent = ch;
     el.introZeros.appendChild(span);
@@ -837,7 +837,7 @@ function finishIntroNow() {
   ['name', 'years', 'stamp'].forEach(n => { const b = get(n); b.classList.remove('is-in'); b.classList.add('is-out'); });
   el.introYearsWord.style.display = 'none';
   if (!el.introZeros.children.length) {
-    ',000'.split('').forEach(ch => { const s = document.createElement('span'); s.className = 'z stamped'; s.textContent = ch; el.introZeros.appendChild(s); });
+    ' 000'.split('').forEach(ch => { const s = document.createElement('span'); s.className = 'z stamped'; s.textContent = ch; el.introZeros.appendChild(s); });
   }
   el.introSubReq.classList.add('is-in');
   el.introStamp.classList.add('slam');
@@ -915,7 +915,7 @@ function wire() {
   el.finalCrackBtn.addEventListener('click', deliverFinalCrack);
   el.tripBtn.addEventListener('click', () => {
     el.tripDetails.hidden = !el.tripDetails.hidden;
-    el.tripBtn.textContent = el.tripDetails.hidden ? 'Show trip details' : 'Hide trip details';
+    el.tripBtn.textContent = el.tripDetails.hidden ? 'Visa resedetaljer' : 'Dölj resedetaljer';
     if (!el.tripDetails.hidden) loadTripVideo();
   });
   el.mute.addEventListener('click', () => {
