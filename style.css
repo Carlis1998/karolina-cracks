@@ -82,33 +82,23 @@ img { -webkit-user-drag: none; }
   background: radial-gradient(118% 92% at 50% 36%, transparent 52%, rgba(0,0,0,0.66) 100%);
 }
 
-/* Side machinery — now desaturated to engraved pewter line-art. */
-.machinery {
-  position: fixed; top: 0; bottom: 0; width: 24vw; max-width: 160px; z-index: 0; pointer-events: none;
-  background-repeat: no-repeat; background-position: center; background-size: contain;
-  opacity: 0.20; filter: grayscale(1) contrast(1.15) brightness(0.85);
-}
-.machinery--left  { left: 0;  background-image: url("assets/images/ui/machinery_1.png"); background-position: left center; }
-.machinery--right { right: 0; background-image: url("assets/images/ui/machinery_2.png"); background-position: right center; transform: scaleX(-1); }
-@media (max-width: 720px) { .machinery { opacity: 0.12; } }
+/* Side machinery — hidden: the celestial backdrop carries its own ornate border. */
+.machinery { display: none; }
 
-/* Full-bleed engraved backdrop — fills the void on wide/tall viewports. */
+/* Full-bleed celestial backdrop — starry night sky with engraved cloud/moon border. */
 .bg-plate {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: #0a0a09 url("assets/images/ui/v2_bg_main.jpg") center center / cover no-repeat;
+  background: #07070c url("assets/images/ui/bg_celestial.png") center center / cover no-repeat;
 }
+/* Gentle vignette: just enough center-darkening for text contrast without
+   smothering the stars and border decoration at the edges. */
 .bg-plate::after {
   content: ""; position: absolute; inset: 0;
-  background: radial-gradient(120% 86% at 50% 30%, rgba(10,10,9,0.30) 0%, rgba(8,8,7,0.70) 66%, rgba(4,4,3,0.93) 100%);
+  background: radial-gradient(118% 82% at 50% 42%, rgba(7,7,12,0) 0%, rgba(5,5,10,0.22) 68%, rgba(3,3,7,0.52) 100%);
 }
 
-/* Ornate engraved border — hugs the centered phone column (not the full window). */
-.frame-overlay {
-  position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: min(100%, var(--col-max)); z-index: 4; pointer-events: none;
-  background: url("assets/images/ui/v2_frame_plate.png") center/100% 100% no-repeat;
-  opacity: 0.22; mix-blend-mode: screen;
-}
+/* Ornate frame overlay — hidden: the celestial asset already frames the column. */
+.frame-overlay { display: none; }
 
 /* ---------- Screens ---------- */
 .screen {
@@ -305,22 +295,21 @@ body.is-loading .screen { display: none; }
 .egg-stage[data-glow="mid"]  .egg-starburst { opacity: 0.55; }
 .egg-stage[data-glow="high"] .egg-starburst { opacity: 0.85; animation: spinSlow 26s linear infinite, glowPulse 1.6s ease-in-out infinite; }
 
-/* Ornate cameo that ENSHRINES the egg — the egg nests inside the oval opening so it
-   reads as a relic on display rather than floating in a void. Sits behind the egg
-   (the oval centre is transparent) with a soft gold drop so it lifts off the backdrop.
-   Nudged up so the oval's optical centre (below the crown) lands on the egg. */
+/* Engraved nest-on-urn that CRADLES the egg — the egg rests down inside the twig
+   bowl so it reads as a relic on a pedestal rather than floating in a void. Sits
+   behind the egg; the bowl interior is transparent so the night sky shows through. */
 .egg-shrine {
   position: absolute; z-index: 1; pointer-events: none;
-  width: min(94vw, 440px); aspect-ratio: 750 / 900;
-  background: url("assets/images/ui/v2_cameo_frame.png") center/contain no-repeat;
-  filter: drop-shadow(0 14px 34px rgba(0,0,0,0.55)) drop-shadow(0 0 10px rgba(216,183,106,0.16));
-  transform: translateY(-3%);
+  width: min(90vw, 372px); aspect-ratio: 955 / 894;
+  background: url("assets/images/ui/egg_nest_stand.png") center/contain no-repeat;
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,0.62)) drop-shadow(0 0 10px rgba(216,183,106,0.12));
+  transform: translateY(9%);
 }
-/* the cameo breathes a touch brighter as the egg takes damage */
-.egg-stage[data-glow="mid"]  .egg-shrine { filter: drop-shadow(0 14px 34px rgba(0,0,0,0.55)) drop-shadow(0 0 14px rgba(216,183,106,0.3)); }
-.egg-stage[data-glow="high"] .egg-shrine { filter: drop-shadow(0 14px 34px rgba(0,0,0,0.55)) drop-shadow(0 0 20px rgba(236,214,160,0.5)); }
-/* inside the shrine the egg nests a little smaller so the oval frames it cleanly */
-.screen--game .egg-img { width: min(52vw, 224px); max-height: 40vh; }
+/* the nest breathes a touch brighter as the egg takes damage */
+.egg-stage[data-glow="mid"]  .egg-shrine { filter: drop-shadow(0 18px 30px rgba(0,0,0,0.62)) drop-shadow(0 0 14px rgba(216,183,106,0.3)); }
+.egg-stage[data-glow="high"] .egg-shrine { filter: drop-shadow(0 18px 30px rgba(0,0,0,0.62)) drop-shadow(0 0 20px rgba(236,214,160,0.5)); }
+/* the egg nests smaller and lifted up so it settles into the twig bowl */
+.screen--game .egg-img { width: min(40vw, 168px); max-height: 30vh; top: -12%; }
 
 .egg-glow {
   position: absolute; width: 78%; max-width: 420px; aspect-ratio: 1; border-radius: 50%;
@@ -332,7 +321,8 @@ body.is-loading .screen { display: none; }
 .egg-stage[data-glow="high"] .egg-glow { opacity: 0.95; animation: glowPulse 1.3s ease-in-out infinite; }
 @keyframes glowPulse { 50% { transform: scale(1.08); opacity: 0.85; } }
 
-.egg-shadow { position: absolute; bottom: 6%; width: 46%; height: 5%; border-radius: 50%; background: radial-gradient(ellipse, rgba(0,0,0,0.7), transparent 70%); filter: blur(3px); }
+/* contact shadow hidden — the egg now rests in the nest bowl, not on a flat floor. */
+.egg-shadow { display: none; }
 
 .egg-img {
   position: relative; width: min(64vw, 280px); max-height: 46vh; object-fit: contain; z-index: 2;

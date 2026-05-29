@@ -46,10 +46,12 @@ const SKIP_READ_MS = 3000;
 const SKIP_READ_WITH_NOTE_MS = 4600;
 const WRONG_READ_MS = 1500;
 const UPGRADE_TOAST_MS = 3400;
-// Protocol checks are gated on STRIKES, not score: at least Q_MIN_TAPS egg-strikes
-// must pass before each check fires (jittered up to +6 so the rhythm isn't robotic).
-const Q_MIN_TAPS = 25;
-function pickQInterval() { return Q_MIN_TAPS + Math.floor(Math.random() * 7); } // 25..31
+// Protocol checks are gated on STRIKES, not score. The FIRST check is a long grind
+// (FIRST_Q_TAPS) so the slow +1 opening builds tension; every check after that fires
+// ~Q_MIN_TAPS strikes apart (jittered up to +6 so the rhythm isn't robotic).
+const FIRST_Q_TAPS = 100;
+const Q_MIN_TAPS = 40;
+function pickQInterval() { return Q_MIN_TAPS + Math.floor(Math.random() * 7); } // 40..46
 // Per-tap crack points for hammer levels 1..24. Progression is now driven ONLY by
 // answering protocol checks correctly (each correct answer = +1 hammer level). The
 // ramp is gentle early and escalates: ~90 efficient taps reach 26,000 if every check
@@ -108,7 +110,7 @@ let multiplierEndsAt = 0;
 let questionOpen = false;
 let currentQuestion = null;
 let tapsSinceQuestion = 0;            // strikes counted toward the next protocol check
-let nextQInterval = pickQInterval();  // ≥25 strikes (jittered) required before it fires
+let nextQInterval = FIRST_Q_TAPS;     // first check is a long grind; later ones use pickQInterval()
 let sysMsgTimer = null;
 const keyedCache = {};
 
@@ -258,6 +260,14 @@ function eggStateForCracks(c) {
   for (let i = 0; i < EGG_BANDS.length; i++) if (c >= EGG_BANDS[i]) s = i + 1;
   return s;
 }
+// Visible cracking tracks how many checks are cleared, so the egg degrades steadily
+// across the game even though the point ramp is intentionally slow-then-steep.
+function eggStateForProgress() {
+  if (state.isComplete || state.currentCracks >= TARGET) return 10;
+  const total = QUESTIONS.length || 1;
+  const ans = Math.min(state.answeredQuestions.length, total);
+  return clamp(1 + Math.round((ans / total) * 8), 1, 9);
+}
 function pointsPerTap() {
   return HAMMERS[state.hammerLevel - 1].pts * activeMultiplier;
 }
@@ -270,18 +280,33 @@ function pointsPerTap() {
 // instead of the counter freezing at the finish-gate. HAMMER_PTS is the offline fallback.
 function calibrateHammers() {
   if (!QUESTIONS.length) return;
-  const avgInterval = Q_MIN_TAPS + 3;          // midpoint of pickQInterval() (25..31)
-  const shape = (lvl) => 1 + (lvl - 1) * 0.18; // relative ramp: 1.0 (L1) … ~5.1 (L24)
+  const avgSub = Q_MIN_TAPS + 3;               // midpoint of pickQInterval() (40..46)
+  // Level the player plays in the segment AFTER each check, plus any point-bonus rewards.
+  const segLevels = [];
   let level = 1, bonus = 0;
-  let weighted = shape(level) * avgInterval;   // strikes before the first check
   for (const q of QUESTIONS) {
     const r = q.reward || {};
-    if (r.type === 'points') bonus += r.value || 0;
-    else if (r.type === 'hammer') level = Math.max(level, r.value || level);
-    weighted += shape(level) * avgInterval;    // strikes played at the (possibly new) level
+    if (r.type === 'hammer') level = Math.max(level, r.value || level);
+    else if (r.type === 'points') bonus += r.value || 0;
+    segLevels.push(level);                     // strikes after this check land at `level`
   }
-  const scale = Math.max(1, (TARGET - bonus) / Math.max(1, weighted));
-  HAMMERS = HAMMERS.map((h, i) => ({ name: h.name, pts: Math.max(1, Math.round(shape(i + 1) * scale)) }));
+  // Geometric ramp: L1 = exactly 1 pt/strike (per request) so the opening is a real grind;
+  // each level multiplies points by `ratio`. Solve `ratio` so the climb (FIRST_Q_TAPS strikes
+  // at L1, then ~avgSub strikes at each new level) lands a touch under TARGET — the ×26 finale
+  // delivers the final crack instead of the counter freezing at the finish-gate.
+  const goal = TARGET * 0.92;
+  const totalAt = (ratio) => {
+    let pts = FIRST_Q_TAPS;                     // slow opening: 100 strikes × 1 pt
+    for (const lv of segLevels) pts += avgSub * Math.pow(ratio, lv - 1);
+    return pts + bonus;
+  };
+  let lo = 1, hi = 3;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (totalAt(mid) > goal) hi = mid; else lo = mid;
+  }
+  const ratio = (lo + hi) / 2;
+  HAMMERS = HAMMERS.map((h, i) => ({ name: h.name, pts: Math.max(1, Math.round(Math.pow(ratio, i))) }));
 }
 function nextQuestion() {
   // Firing is gated on STRIKES, not score (see maybeQuestion). QUESTIONS is sorted by
@@ -346,8 +371,8 @@ function render() {
   el.multiplierLabel.dataset.active = lvl > 1 ? 'true' : 'false';
   el.strikeInfo.textContent = '+' + fmt(pointsPerTap()) + ' per slag';
 
-  // egg state
-  const es = eggStateForCracks(state.currentCracks);
+  // egg state — whichever is further along: raw crack bands or checks-cleared progress
+  const es = Math.max(eggStateForCracks(state.currentCracks), eggStateForProgress());
   if (es !== lastEggState) {
     setKeyed(el.eggImg, ASSETS.eggs[es - 1], ASSETS.eggBg);
     lastEggState = es;
@@ -360,8 +385,7 @@ function render() {
   } else if (!nextQuestion()) {
     el.protocolHint.textContent = 'Alla popquiz klara';
   } else {
-    const left = Math.max(0, nextQInterval - tapsSinceQuestion);
-    el.protocolHint.textContent = left > 0 ? 'Nästa popquiz om ' + left + ' slag' : 'Nästa popquiz: strax';
+    el.protocolHint.textContent = '';   // countdown removed — when the next check fires stays a surprise
   }
 }
 
