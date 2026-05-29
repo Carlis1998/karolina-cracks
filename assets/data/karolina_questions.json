@@ -95,20 +95,6 @@
       "invented": false
     },
     {
-      "id": 6,
-      "category": "psychology",
-      "threshold": 4700,
-      "question": "Vad pluggar Karolina i Linköping?",
-      "options": ["Psykologi", "Äggteknik", "Avancerad bakning", "Linjär algebra på heltid"],
-      "correctIndex": 0,
-      "successText": "Rätt. Snart legitimerad att säga ett enda olycksbådande ord.",
-      "wrongText": "Nästan. Men diplomet säger psykologi.",
-      "rewardText": "Hammare uppgraderad: Moa-Kalibrerad Ånghammare.",
-      "reward": { "type": "hammer", "value": 7 },
-      "personalNote": "Snart legitimerad psykolog. Vi är så stolta över dig.",
-      "invented": false
-    },
-    {
       "id": 8,
       "category": "philosophy",
       "threshold": 7000,

@@ -45,7 +45,11 @@ const ANSWER_READ_WITH_NOTE_MS = 5200;
 const SKIP_READ_MS = 3000;
 const SKIP_READ_WITH_NOTE_MS = 4600;
 const WRONG_READ_MS = 1500;
-const UPGRADE_TOAST_MS = 2800;
+const UPGRADE_TOAST_MS = 3400;
+// Protocol checks are gated on STRIKES, not score: at least Q_MIN_TAPS egg-strikes
+// must pass before each check fires (jittered up to +6 so the rhythm isn't robotic).
+const Q_MIN_TAPS = 25;
+function pickQInterval() { return Q_MIN_TAPS + Math.floor(Math.random() * 7); } // 25..31
 // Per-tap crack points for hammer levels 1..24. Progression is now driven ONLY by
 // answering protocol checks correctly (each correct answer = +1 hammer level). The
 // ramp is gentle early and escalates: ~90 efficient taps reach 26,000 if every check
@@ -103,6 +107,8 @@ let multiplierTimer = null;
 let multiplierEndsAt = 0;
 let questionOpen = false;
 let currentQuestion = null;
+let tapsSinceQuestion = 0;            // strikes counted toward the next protocol check
+let nextQInterval = pickQInterval();  // ≥25 strikes (jittered) required before it fires
 let sysMsgTimer = null;
 const keyedCache = {};
 
@@ -255,13 +261,33 @@ function eggStateForCracks(c) {
 function pointsPerTap() {
   return HAMMERS[state.hammerLevel - 1].pts * activeMultiplier;
 }
-function nextQuestion() {
-  return QUESTIONS.find(q => !state.answeredQuestions.includes(q.id) && state.currentCracks >= q.threshold)
-      || null;
+// Per-tap points are CALIBRATED to the live question set at boot. Every check is spaced
+// ≥Q_MIN_TAPS strikes apart, so clearing all N checks takes ~avgInterval·(N+1) strikes.
+// We size a gentle escalating ramp (each hammer hits a little harder) so those strikes
+// accumulate to ~TARGET right as the final check clears — independent of how many
+// questions remain, so trimming the list never breaks the pacing. Errs slightly low on
+// purpose: the counter keeps visibly climbing and the ×26 finale delivers the last bit
+// instead of the counter freezing at the finish-gate. HAMMER_PTS is the offline fallback.
+function calibrateHammers() {
+  if (!QUESTIONS.length) return;
+  const avgInterval = Q_MIN_TAPS + 3;          // midpoint of pickQInterval() (25..31)
+  const shape = (lvl) => 1 + (lvl - 1) * 0.18; // relative ramp: 1.0 (L1) … ~5.1 (L24)
+  let level = 1, bonus = 0;
+  let weighted = shape(level) * avgInterval;   // strikes before the first check
+  for (const q of QUESTIONS) {
+    const r = q.reward || {};
+    if (r.type === 'points') bonus += r.value || 0;
+    else if (r.type === 'hammer') level = Math.max(level, r.value || level);
+    weighted += shape(level) * avgInterval;    // strikes played at the (possibly new) level
+  }
+  const scale = Math.max(1, (TARGET - bonus) / Math.max(1, weighted));
+  HAMMERS = HAMMERS.map((h, i) => ({ name: h.name, pts: Math.max(1, Math.round(shape(i + 1) * scale)) }));
 }
-function upcomingThreshold() {
-  const q = QUESTIONS.find(q => !state.answeredQuestions.includes(q.id));
-  return q ? q.threshold : null;
+function nextQuestion() {
+  // Firing is gated on STRIKES, not score (see maybeQuestion). QUESTIONS is sorted by
+  // threshold at load, so the first unanswered one is the lowest-threshold check —
+  // keeping the intended difficulty curve and trick-round interleaving intact.
+  return QUESTIONS.find(q => !state.answeredQuestions.includes(q.id)) || null;
 }
 function questionsPending() {
   return QUESTIONS.some(q => !state.answeredQuestions.includes(q.id));
@@ -318,7 +344,7 @@ function render() {
   // hammer level label (each correct protocol check upgrades it)
   el.multiplierLabel.textContent = 'Hammare ' + lvl + ' / ' + HAMMERS.length;
   el.multiplierLabel.dataset.active = lvl > 1 ? 'true' : 'false';
-  el.strikeInfo.textContent = '+' + fmt(pointsPerTap()) + ' per strike';
+  el.strikeInfo.textContent = '+' + fmt(pointsPerTap()) + ' per slag';
 
   // egg state
   const es = eggStateForCracks(state.currentCracks);
@@ -328,11 +354,15 @@ function render() {
     el.eggStage.dataset.glow = es >= 9 ? 'high' : es >= 7 ? 'mid' : es >= 6 ? 'low' : '';
   }
 
-  // protocol hint
-  const ut = upcomingThreshold();
-  el.protocolHint.textContent = ut !== null
-    ? 'Next protocol check at ' + fmt(ut)
-    : (state.currentCracks >= TARGET ? 'Requirement complete' : 'All protocols cleared');
+  // protocol hint — counts down the strikes left until the next check fires
+  if (state.currentCracks >= TARGET && !questionsPending()) {
+    el.protocolHint.textContent = 'Kravet uppfyllt';
+  } else if (!nextQuestion()) {
+    el.protocolHint.textContent = 'Alla popquiz klara';
+  } else {
+    const left = Math.max(0, nextQInterval - tapsSinceQuestion);
+    el.protocolHint.textContent = left > 0 ? 'Nästa popquiz om ' + left + ' slag' : 'Nästa popquiz: strax';
+  }
 }
 
 /* ----------------------------- TAP / STRIKE ----------------------------- */
@@ -390,6 +420,7 @@ function strikeAt(clientX, clientY) {
   if (crit) { Sound.fx.hitHard(); Sound.fx.crack(); buzz([14, 26, 14]); }
   else { hard ? Sound.fx.hitHard() : Sound.fx.hit(); buzz(hard ? 16 : 8); }
 
+  tapsSinceQuestion++;
   addCracks(gained);
 
   if (eggStateForCracks(state.currentCracks) !== prevState) Sound.fx.crack();
@@ -553,12 +584,17 @@ function showUpgrade(oldLevel, level) {
 
 /* ------------------------------ QUESTIONS ------------------------------- */
 function maybeQuestion() {
+  if (questionOpen) return;
+  // At least Q_MIN_TAPS strikes (jittered up to +6) must land between checks.
+  if (tapsSinceQuestion < nextQInterval) return;
   const q = nextQuestion();
-  if (q && !questionOpen) cueQuestion(q);
+  if (q) cueQuestion(q);
 }
 function cueQuestion(q) {
   questionOpen = true;
   currentQuestion = q;
+  tapsSinceQuestion = 0;
+  nextQInterval = pickQInterval();
   clearTimeout(idleTimer); el.eggImg.classList.remove('breathing');
   if (el.questionPrelude) {
     el.questionPrelude.classList.add('is-open');
@@ -909,20 +945,19 @@ async function boot() {
         if (i >= 0 && i < HAMMERS.length && h.name) HAMMERS[i].name = h.name;
       });
     }
+    calibrateHammers();
   } catch (e) {
     QUESTIONS = []; // game still works without questions
     console.warn('questions.json failed to load:', e);
   }
 
-  // Self-heal stale/leaked progress: a question can only have been answered once
-  // cracks reached its threshold (and cracks only increase). Any answered id whose
-  // threshold is above current cracks — or that no longer exists — is impossible,
-  // so drop it. Prevents stale localStorage from permanently suppressing the quizzes.
+  // Self-heal stale/leaked progress: checks now fire on strike count, not score, so a
+  // question can legitimately be answered at any crack total. The only impossible
+  // "answered" id is one that no longer exists (e.g. a removed question) — drop those
+  // so stale localStorage can't permanently suppress the live quiz set.
   if (QUESTIONS.length && state.answeredQuestions.length) {
-    const valid = state.answeredQuestions.filter((id) => {
-      const q = QUESTIONS.find((x) => x.id === id);
-      return q && state.currentCracks >= q.threshold;
-    });
+    const valid = state.answeredQuestions.filter((id) =>
+      QUESTIONS.some((x) => x.id === id));
     if (valid.length !== state.answeredQuestions.length) {
       state.answeredQuestions = valid;
       save();

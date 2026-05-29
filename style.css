@@ -305,6 +305,23 @@ body.is-loading .screen { display: none; }
 .egg-stage[data-glow="mid"]  .egg-starburst { opacity: 0.55; }
 .egg-stage[data-glow="high"] .egg-starburst { opacity: 0.85; animation: spinSlow 26s linear infinite, glowPulse 1.6s ease-in-out infinite; }
 
+/* Ornate cameo that ENSHRINES the egg — the egg nests inside the oval opening so it
+   reads as a relic on display rather than floating in a void. Sits behind the egg
+   (the oval centre is transparent) with a soft gold drop so it lifts off the backdrop.
+   Nudged up so the oval's optical centre (below the crown) lands on the egg. */
+.egg-shrine {
+  position: absolute; z-index: 1; pointer-events: none;
+  width: min(94vw, 440px); aspect-ratio: 750 / 900;
+  background: url("assets/images/ui/v2_cameo_frame.png") center/contain no-repeat;
+  filter: drop-shadow(0 14px 34px rgba(0,0,0,0.55)) drop-shadow(0 0 10px rgba(216,183,106,0.16));
+  transform: translateY(-3%);
+}
+/* the cameo breathes a touch brighter as the egg takes damage */
+.egg-stage[data-glow="mid"]  .egg-shrine { filter: drop-shadow(0 14px 34px rgba(0,0,0,0.55)) drop-shadow(0 0 14px rgba(216,183,106,0.3)); }
+.egg-stage[data-glow="high"] .egg-shrine { filter: drop-shadow(0 14px 34px rgba(0,0,0,0.55)) drop-shadow(0 0 20px rgba(236,214,160,0.5)); }
+/* inside the shrine the egg nests a little smaller so the oval frames it cleanly */
+.screen--game .egg-img { width: min(52vw, 224px); max-height: 40vh; }
+
 .egg-glow {
   position: absolute; width: 78%; max-width: 420px; aspect-ratio: 1; border-radius: 50%;
   background: radial-gradient(circle, rgba(236,214,160,0.5) 0%, rgba(216,183,106,0.16) 42%, transparent 70%);
@@ -550,23 +567,29 @@ body.is-loading .screen { display: none; }
   filter: drop-shadow(0 10px 16px rgba(0,0,0,0.68)); transform-origin: 50% 80%;
 }
 .toast-swap-arrow { align-self: center; color: var(--gold-2); font-family: var(--font-display); font-size: 1.55rem; text-shadow: 0 0 12px rgba(236,214,160,0.46); }
-.toast.is-open .toast-hammer-card--old img { animation: oldHammerYeet 1.15s cubic-bezier(.4,0,.2,1) 0.42s both; }
+/* The OLD hammer no longer flies away — it steps aside, dims to a retired
+   pewter tone and STAYS on screen next to the new one, so the swap reads as a
+   clear "old → new" comparison. The arrow keeps nudging toward the new hammer. */
+.toast.is-open .toast-hammer-card--old img { animation: oldHammerRetire 0.9s cubic-bezier(.4,0,.2,1) 0.42s both; }
 .toast.is-open .toast-hammer-card--new img { animation: newHammerArrives 0.82s cubic-bezier(.16,1.5,.3,1) 0.56s both; }
-.toast.is-open .toast-hammer-card--old span { animation: oldLabelFade 1.15s ease 0.42s both; }
+.toast.is-open .toast-hammer-card--old span { animation: oldLabelFade 0.9s ease 0.42s both; }
 .toast.is-open .toast-hammer-card--new span { animation: popIn 0.45s ease 0.78s both; }
-.toast.is-open .toast-swap-arrow { animation: arrowBoing 0.8s ease 0.48s both; }
-@keyframes oldHammerYeet {
-  0% { opacity: 1; transform: translate(0,0) rotate(0) scale(1); }
-  52% { opacity: 1; transform: translate(-22px,-18px) rotate(-34deg) scale(0.92); }
-  100% { opacity: 0; transform: translate(-92px,42px) rotate(-118deg) scale(0.55); }
+.toast.is-open .toast-swap-arrow { animation: arrowBoing 0.8s ease 0.48s both, arrowNudge 1.15s ease-in-out 1.5s infinite; }
+.toast.is-open .toast-hammer-card--new { animation: newCardGlow 1.6s ease-in-out 0.9s infinite; }
+@keyframes oldHammerRetire {
+  0%   { opacity: 1; transform: translate(0,0) rotate(0) scale(1); filter: none; }
+  45%  { transform: translate(0,-12px) rotate(-9deg) scale(0.97); }
+  100% { opacity: 0.46; transform: translate(0,2px) rotate(-5deg) scale(0.8); filter: grayscale(0.78) brightness(0.82); }
 }
 @keyframes newHammerArrives {
-  0% { opacity: 0; transform: translate(78px,-36px) rotate(38deg) scale(0.45); }
-  62% { opacity: 1; transform: translate(-8px,4px) rotate(-7deg) scale(1.14); }
+  0%   { opacity: 0; transform: translate(78px,-36px) rotate(38deg) scale(0.45); }
+  62%  { opacity: 1; transform: translate(-8px,4px) rotate(-7deg) scale(1.14); }
   100% { opacity: 1; transform: translate(0,0) rotate(0) scale(1); }
 }
-@keyframes oldLabelFade { 0%,45% { opacity: 1; } 100% { opacity: 0.32; } }
+@keyframes oldLabelFade { 0%,55% { opacity: 1; } 100% { opacity: 0.6; } }
 @keyframes arrowBoing { 0% { transform: scale(0.4); opacity: 0; } 55% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes arrowNudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+@keyframes newCardGlow { 0%,100% { filter: drop-shadow(0 0 0 rgba(236,214,160,0)); } 50% { filter: drop-shadow(0 0 12px rgba(236,214,160,0.55)); } }
 
 /* ===================== FINAL PROMPT ===================== */
 .final-prompt { align-items: center; }
